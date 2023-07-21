@@ -39,7 +39,8 @@ def after_request(response):
 def index():
     """Show portfolio of stocks"""
     # Select names of stock and their shares for user
-    rows = db.execute("SELECT name, SUM(shares) AS shares FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ? GROUP BY id_stock  HAVING SUM(shares) > 0 ORDER BY name", session["user_id"])
+    rows = db.execute(
+        "SELECT name, SUM(shares) AS shares FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ? GROUP BY id_stock  HAVING SUM(shares) > 0 ORDER BY name", session["user_id"])
     total_stocks_value = 0   # For counting how mutch all stocks cost
     for row in rows:  # Rows - list of dicts
         row["cur_price"] = lookup(row["name"])["price"]   # Adding current price for each stock in dictionary
@@ -67,18 +68,19 @@ def buy():
 
         return postbuy(symbol, shares)  # Part for post request
 
+
 @app.route("/history")
 @login_required
 def history():
     """Show history of transactions"""
     # Select transactions for user
-    rows = db.execute("SELECT name, shares, date, price FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ?  ORDER BY date", session["user_id"])
+    rows = db.execute(
+        "SELECT name, shares, date, price FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ?  ORDER BY date", session["user_id"])
 
     for row in rows:  # Rows - list of dicts
         row["price"] = usd(row["price"])   # Adding dollar sign
 
     return render_template("history.html", rows=rows)
-
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -152,11 +154,11 @@ def register():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-        username = request.form.get("username") # Get username from form
+        username = request.form.get("username")  # Get username from form
         if not username:                  # If have not provided
             return apology("must provide username", 400)
 
-        rows = db.execute("SELECT * FROM users WHERE username = ?", username) # Check if there is user with this name
+        rows = db.execute("SELECT * FROM users WHERE username = ?", username)  # Check if there is user with this name
         if len(rows) != 0:
             return apology("username already exists", 400)
 
@@ -167,7 +169,8 @@ def register():
         if password != confirmation:     # If passwords have not matched
             return apology("the passwords do not match", 400)
 
-        db.execute("INSERT INTO users(username, hash) VALUES(?,?)", username, generate_password_hash(password))  # Insert new user into database
+        db.execute("INSERT INTO users(username, hash) VALUES(?,?)", username,
+                   generate_password_hash(password))  # Insert new user into database
 
         # Redirect user to home page
         return redirect("/")
@@ -177,20 +180,21 @@ def register():
         return render_template("register.html")
 
 
-
 @app.route("/sell", methods=["GET", "POST"])
 @login_required
 def sell():
     """Sell shares of stock"""
     if request.method == "GET":
         # Get names of stocks user had transactions with from db
-        stocks = db.execute("SELECT name FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ? GROUP BY name HAVING SUM(shares) > 0 ORDER BY name", session["user_id"])
+        stocks = db.execute(
+            "SELECT name FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ? GROUP BY name HAVING SUM(shares) > 0 ORDER BY name", session["user_id"])
         return render_template("sell.html", stocks=stocks)
     else:                                    # If method - POST
         symbol = request.form.get("symbol")   # Get symbol of the stock from form
         shares = request.form.get("shares")    # Get shares from form
 
         return postsell(symbol, shares)  # Part for post request
+
 
 @app.route("/buysell", methods=["POST"])
 @login_required
@@ -231,12 +235,12 @@ def postbuy(symbol, shares):
     except ValueError:
         pass
 
-    db.execute("INSERT INTO transactions (id_stock, user_id, price, shares, date) VALUES((SELECT id FROM stocks WHERE name = ?), ?, ?, ?, ?)", symbol, session["user_id"], response["price"], shares, datetime.datetime.now(pytz.timezone("US/Eastern")))  # Insert new transaction
+    db.execute("INSERT INTO transactions (id_stock, user_id, price, shares, date) VALUES((SELECT id FROM stocks WHERE name = ?), ?, ?, ?, ?)",
+               symbol, session["user_id"], response["price"], shares, datetime.datetime.now(pytz.timezone("US/Eastern")))  # Insert new transaction
 
-    db.execute("UPDATE users SET cash = ? WHERE id = ?",cash, session["user_id"])  # Update user's cash
+    db.execute("UPDATE users SET cash = ? WHERE id = ?", cash, session["user_id"])  # Update user's cash
 
     return redirect("/")
-
 
 
 def postsell(symbol, shares):
@@ -255,7 +259,8 @@ def postsell(symbol, shares):
         return apology("Share - int > 0", 400)
 
     # How many shares of that(user want to sell) stock user got
-    shares_user_got = db.execute("SELECT SUM(shares) AS shares FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ? AND name = ? GROUP BY name", session["user_id"], symbol)
+    shares_user_got = db.execute(
+        "SELECT SUM(shares) AS shares FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ? AND name = ? GROUP BY name", session["user_id"], symbol)
     # List of dicts into int
     shares_user_got = shares_user_got[0]["shares"]
 
@@ -263,7 +268,8 @@ def postsell(symbol, shares):
         return apology(f"You have only {shares_user_got} shares", 400)
     else:
         response = lookup(symbol)     # Looks prices through API
-        db.execute("INSERT INTO transactions (id_stock, user_id, price, shares, date) VALUES((SELECT id FROM stocks WHERE name = ?), ?, ?, ?, ?)", symbol, session["user_id"], response["price"], -shares, datetime.datetime.now(pytz.timezone("US/Eastern")))  # Insert new transaction
+        db.execute("INSERT INTO transactions (id_stock, user_id, price, shares, date) VALUES((SELECT id FROM stocks WHERE name = ?), ?, ?, ?, ?)",
+                   symbol, session["user_id"], response["price"], -shares, datetime.datetime.now(pytz.timezone("US/Eastern")))  # Insert new transaction
 
         profit = response["price"] * shares
 
