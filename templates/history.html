@@ -18,7 +18,6 @@
             </thead>
             <tbody>
                 {% for row in rows %}
-
                     {% if row.shares > 0 %}
                     <tr class="table-info">
                         <td>buy</td>
@@ -27,7 +26,7 @@
                         <td>sell</td>
                     {% endif %}
                         <td><b>{{ row.name }}</b></td>
-                        <td>{{ row.price }}</td>
+                        <td>{{ row.price | usd }}</td>
                         <td>{{ row.shares| abs  }}</td>
                         <td>{{ row.date }}</td>
                     </tr>

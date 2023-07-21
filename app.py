@@ -77,9 +77,6 @@ def history():
     rows = db.execute(
         "SELECT name, shares, date, price FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ?  ORDER BY date", session["user_id"])
 
-    for row in rows:  # Rows - list of dicts
-        row["price"] = usd(row["price"])   # Adding dollar sign
-
     return render_template("history.html", rows=rows)
 
 
