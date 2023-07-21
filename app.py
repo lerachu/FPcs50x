@@ -163,9 +163,9 @@ def register():
         password = request.form.get("password")    # Get password out of form
         confirmation = request.form.get("confirmation")  # Get password out of form (second try)
         if not password:  # If form is empty
-            return apology("must provide password", 403)
+            return apology("must provide password", 400)
         if password != confirmation:     # If passwords have not matched
-            return apology("the passwords do not match", 403)
+            return apology("the passwords do not match", 400)
 
         db.execute("INSERT INTO users(username, hash) VALUES(?,?)", username, generate_password_hash(password))  # Insert new user into database
 
@@ -225,7 +225,7 @@ def postbuy(symbol, shares):
 
     cash = cash[0]['cash'] - cost  # Can user afford the bargain?
     if cash < 0:
-        return apology("Not enough money", 403)
+        return apology("Not enough money", 400)
     try:
         db.execute("INSERT INTO stocks (name) VALUES(?)", symbol)  # Insert name of stock in the table if it is not there
     except ValueError:
@@ -260,7 +260,7 @@ def postsell(symbol, shares):
     shares_user_got = shares_user_got[0]["shares"]
 
     if shares_user_got < shares:   # If user has less shares than he whant to sell
-        return apology(f"You have only {shares_user_got} shares", 403)
+        return apology(f"You have only {shares_user_got} shares", 400)
     else:
         response = lookup(symbol)     # Looks prices through API
         db.execute("INSERT INTO transactions (id_stock, user_id, price, shares, date) VALUES((SELECT id FROM stocks WHERE name = ?), ?, ?, ?, ?)", symbol, session["user_id"], response["price"], -shares, datetime.datetime.now(pytz.timezone("US/Eastern")))  # Insert new transaction
