@@ -139,7 +139,7 @@ def quote():
         response = lookup(symbol)          # Looks prices through API
 
         if not response:            # If stock does not exist (with this symbol)
-            return apology("invalid symbol", 403)
+            return apology("invalid symbol", 400)
 
         price = usd(response["price"])     # To add dollar sign
 
@@ -154,11 +154,11 @@ def register():
     if request.method == "POST":
         username = request.form.get("username") # Get username from form
         if not username:                  # If have not provided
-            return apology("must provide username", 403)
+            return apology("must provide username", 400)
 
         rows = db.execute("SELECT * FROM users WHERE username = ?", username) # Check if there is user with this name
         if len(rows) != 0:
-            return apology("username already exists", 403)
+            return apology("username already exists", 400)
 
         password = request.form.get("password")    # Get password out of form
         confirmation = request.form.get("confirmation")  # Get password out of form (second try)
@@ -207,18 +207,18 @@ def buysell():
 
 def postbuy(symbol, shares):
     if not symbol or not shares:         # If user have non filled each input
-        return apology("Fill each input", 403)
+        return apology("Fill each input", 400)
 
     try:
         shares = int(shares)    # Shares should be integer > 0
         if shares <= 0:
-            return apology("Shares should be > 0", 403)
+            return apology("Shares should be > 0", 400)
     except ValueError:
-        return apology("Shares should be int", 403)
+        return apology("Shares should be int", 400)
 
     response = lookup(symbol)     # Looks prices through API
     if not response:
-        return apology("No such stock", 403)
+        return apology("No such stock", 400)
 
     cost = float(response["price"]) * shares   # The cost of all amount of stocks
     cash = db.execute("SELECT cash FROM users WHERE id = ?", session["user_id"])  # How much money user has got
@@ -241,18 +241,18 @@ def postbuy(symbol, shares):
 
 def postsell(symbol, shares):
     if not shares:                      # If no input
-        return apology("Fill share input", 403)
+        return apology("Fill share input", 400)
 
     if not symbol:                      # If no input
-        return apology("Fill symbol input", 403)
+        return apology("Fill symbol input", 400)
 
     try:
         shares = int(shares)          # If not int
     except ValueError:
-        return apology("Share - int > 0", 403)
+        return apology("Share - int > 0", 400)
 
     if shares <= 0:                 # If int <= 0
-        return apology("Share - int > 0", 403)
+        return apology("Share - int > 0", 400)
 
     # How many shares of that(user want to sell) stock user got
     shares_user_got = db.execute("SELECT SUM(shares) AS shares FROM transactions JOIN stocks ON transactions.id_stock = stocks.id WHERE user_id = ? AND name = ? GROUP BY name", session["user_id"], symbol)
