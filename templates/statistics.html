@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Statistics
+{% endblock %}
+
+{% block main %}
+
+{% if progress >= 80  %}
+    {% set color = "success" %}
+{% elif progress >= 50 %}
+    {% set color = "info" %}
+{% elif progress >= 25 %}
+    {% set color = "warning" %}
+{% else %}
+    {% set color = "danger" %}
+{% endif %}
+
+<div class="container">
+    <div>
+        <h3 class="text-center pinky" style="margin-bottom: 30px;">Your progress to date:</h3>
+    </div>
+
+    <div class="progress" style="height: 30px;">
+        <div class="progress-bar bg-{{ color }}" role="progressbar" aria-label="Пример с меткой" style="width: {{ progress }}%;" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress | round | int }}%</div>
+    </div>
+</div>
+
+<div class="container">
+    <div>
+        <h3 class="text-center pinky" style="margin-top: 100px; margin-bottom: 30px;">Progress history:</h3>
+    </div>
+
+    {% if not progress_history %}
+    <p class="text-center pinky" style="margin-top: 30px;">Complete some task in your plan to see history</p>
+    {% endif %}
+    <ol class="list-group list-group-numbered">
+        {% for progress in progress_history %}
+            <li class="list-group-item d-flex">
+                {% if progress.progress >= 80  %}
+                    {% set color = "success" %}
+                {% elif progress.progress >= 50 %}
+                    {% set color = "info" %}
+                {% elif progress.progress >= 25 %}
+                    {% set color = "warning" %}
+                {% else %}
+                    {% set color = "danger" %}
+                {% endif %}
+            
+                <div class="container w-75">
+                    <div class="progress" style="height: 30px;">
+                        <div class="progress-bar bg-{{ color }}" role="progressbar" aria-label="Пример с меткой" style="width: {{ progress.progress }}%;" aria-valuenow="{{ progress.progress }}" aria-valuemin="0" aria-valuemax="100">{{ progress.progress | round | int }}%</div>
+                    </div>
+                </div>
+                <div>
+                    <h5>{{ progress.date }}</h5>
+                </div>
+            </li>
+        {% endfor %}
+    </ol>
+</div>
+{% endblock %}

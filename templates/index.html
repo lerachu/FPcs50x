@@ -1,64 +1,24 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Quote
+    Greeting
 {% endblock %}
 
 {% block main %}
-    <div class="mb-3">
-        <table class="table table-striped table-bordered align-middle">
-            <thead>
-                <tr>
-                    <th>Buy/Sell</th>
-                    <th>Stock:</th>
-                    <th>Shares:</th>
-                    <th>Current price:</th>
-                    <th>Total value:</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in rows %}
-                    <tr>
-                        <td style="width: 25%">
-                            <div class="form-center">
-                                <form class="row row-cols-lg-auto g-3 align-items-center" action="/buysell" method="post">
-                                    <div class="input-group mb-3">
-                                        <input type="hidden" name="stock" value="{{ row.name }}">
-                                        <input class="form-control mx-auto w-auto" size="10" aria-label="Text input with dropdown button" id="shares" name="shares" placeholder="Shares" type="text">
-                                        <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenu2" data-bs-toggle="dropdown" aria-expanded="false">
-                                            Buy/Sell
-                                        </button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                                            <li><button class="dropdown-item" type="submit" name="buysell" value="buy">Buy</button></li>
-                                            <li><button class="dropdown-item" type="submit" name="buysell" value="sell">Sell</button></li>
-                                        </ul>
-                                    </div>
-                                </form>
-                            </div>
-                        </td>
-                        <td><b>{{ row.name }}</b></td>
-                        <td>{{ row.shares }}</td>
-                        <td>{{ row.cur_price }}</td>
-                        <td>{{ row.total_value }}</td>
-                    </tr>
-                {% endfor %}
-                <tfoot>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><b>Cash balance:</b></td>
-                        <td><b>{{ cash }}</b></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td><b>Total balance:</b></td>
-                        <td><b>{{ balance }}</b></td>
-                    </tr>
-                </tfoot>
-            </tbody>
-        </table>
+
+  <div class="card text-center">
+    <div class="card-body">
+      <h5 class="card-title" style="margin-bottom: 15px;">Hi, {{ questionnaire.name }}💖</h5>
+      <h5 class="card-text">Here is your goal:</h5>
+      <p class="card-text">{{ questionnaire.goal }}</p>
+      <p class="card-text"><small class="text-muted">Go see your <a href="/plan">Plan</a></small></p>
     </div>
+    {% if randpic() %}
+      <div class="container w-25">
+        <img src="{{ randpic() }}" class="card-img-bottom" alt="rand pic from inspirations">
+      </div>
+    {% else %}
+      <img src="/static/22ad4ed410bff0dc32e48405d0f732b2.jpg" class="card-img-bottom" alt="pink flowers default">
+    {% endif %}
+  </div>
 {% endblock %}

@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Questionnaire
+{% endblock %}
+
+{% block main %}
+
+<div class="card">
+    <h5 class="card-header text-center">Your questionnaire💓</h5>
+    <div class="card-body">
+      <h5 class="card-title">Name💜</h5>
+      <p class="card-text">{{ questionnaire.name }}</p>
+      <hr>
+      <h5 class="card-title">Profession🙋</h5>
+      <p class="card-text">{{ questionnaire.profession }}</p>
+      <hr>
+      <h5 class="card-title">Goal🎯</h5>
+      <p class="card-text">{{ questionnaire.goal }}</p>
+      <hr>
+      <h5 class="card-title">Deadline⌛</h5>
+      <p class="card-text">{{ questionnaire.deadline }}</p>
+      <hr>
+      <div class="d-grid gap-2 col-2 mx-auto">
+        <a href="/questionnaire_edit" class="btn btn-primary">Edit</a>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}

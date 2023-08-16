@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Questionnaire editing
+{% endblock %}
+
+{% block main %}
+
+<div>
+    <h2 class="text-center pinky" >Fill in the form</h2>
+</div>
+
+<div class="container-sm">
+    <form action="/questionnaire_edit" method="post">
+
+        <div class="mb-3">
+            <label  class="form-label">Name:</label>
+            <input name="name" autocomplete="off" value="{{ questionnaire.name }}" class="form-control"  placeholder="Enter your name..." required>
+        </div>
+
+        <div class="mb-3">
+            <label  class="form-label">Profession:</label>
+            <input name="profession" autocomplete="off" value="{{ questionnaire.profession }}"  class="form-control"  placeholder="Enter profession you want..." required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Goal:</label>
+            <textarea name="goal" class="form-control" id="exampleFormControlTextarea1" rows="3"  placeholder="Enter your goal..." required>{{ questionnaire.goal }}</textarea>
+            <div class="form-text">Describe your goal in a few words</div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Deadline:</label>
+            <div class="row g-3">
+        
+                <div class="col-md">
+                    <div class="form-floating">
+                        <select name="day" class="form-select" id="floatingSelectGrid" required>
+                            {% if  sendedit  == "Send" %}
+                                <option selected disabled value="">Choose day</option>
+                            {% else %}
+                                <option disabled>Choose day</option>
+                            {% endif %}
+                            {% for day in days %}
+                                {% if day == questionnaire.chosen_day %}
+                                    <option value="{{ day }}" selected>{{ day }}</option>
+                                {% else %}
+                                    <option value="{{ day }}">{{ day }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                        <label for="floatingSelect">Day</label>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                    <select name="month" class="form-select" id="floatingSelectGrid" required>
+                        {% if sendedit == "Send" %}
+                            <option selected disabled value="">Choose month</option>
+                        {% else %}
+                            <option disabled>Choose month</option>
+                        {% endif %}
+                        {% for month in months %}
+                            {% if  month  == questionnaire.chosen_month %}
+                                <option value="{{ month }}" selected>{{ month }}</option>
+                            {% else %}
+                                <option value="{{ month }}">{{ month }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <label for="floatingSelect">Mounth</label>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="form-floating">
+                        <select name="year" class="form-select" id="floatingSelectGrid" required>
+                            {% if sendedit == "Send" %}
+                                <option selected disabled value="">Choose year</option>
+                                {% for year in years %}
+                                    <option value="{{ year }}">{{ year }}</option>
+                                {% endfor %}
+                            {% else %}
+                                <option disabled>Choose year</option>
+                                {% for year in years %}
+                                    {% if year == questionnaire.chosen_year %}
+                                        <option value="{{ year }}" selected>{{ year }}</option>
+                                    {% else %}
+                                        <option value="{{ year }}" >{{ year }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                        <label for="floatingSelect">Year</label>
+                    </div>
+                </div>
+                <div id="emailHelp" class="form-text">Date you wish to reach the goal</div>
+                <button type="submit" class="btn btn-primary">{{ sendedit }}</button>
+            </div>
+        </div>    
+    </form>
+</div>
+
+{% endblock %}

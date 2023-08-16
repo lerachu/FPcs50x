@@ -1,0 +1,159 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Inspiration
+{% endblock %}
+
+{% block main %}
+
+<div class="row justify-content-center">
+    <div class="col-7 text-end">
+        <h3 class="pinky">Add pics that inspire you!</h3>
+    </div>
+    <div class="col-5 text-start">
+        <!-- Кнопка-триггер модального окна -->
+        <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">
+            +Add 
+        </button>
+    </div>
+</div>  
+
+<!-- Модальное окно -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+    
+        <div class="modal-content">
+            <form action="/inspiration" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add pic</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Picture</label>
+                        <input name="img" autocomplete="off" class="form-control" id="customFile" placeholder="Enter URL of the image..." required/>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput2" class="form-label">Link</label>
+                        <input name="link" autocomplete="off" class="form-control" id="exampleFormControlInput2" placeholder="Enter link (if it is a product, for instance)...">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea2" class="form-label" style="white-space: pre-wrap;">Comment</label>
+                        <textarea name="comment" class="form-control" id="exampleFormControlTextarea2" rows="3" placeholder="Enter comment..."></textarea>
+                    </div>
+                    
+                   
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add</button>
+                </div>
+                   
+            </form>
+        </div>
+    
+    </div>
+</div>
+
+
+
+<div class="masonry-container" style="margin-top: 30px;">
+    
+        {% for inspiration in inspirations %}
+            <div class=" masonry-brick">
+                <div class="card">
+                    <img src="{{ inspiration.picture }}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <p class="card-text">{{ inspiration.comment }}</p>
+                        
+                        <div class="row">
+                                <div class="col">
+                                <!-- Кнопка-триггер модального окна -->
+                                <a type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#EditItem{{ inspiration.id }}">Edit</a>
+
+                                <!-- Модальное окно -->
+
+                                <div class="modal fade" id="EditItem{{ inspiration.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    
+                                        <div class="modal-content">
+                                            <form action="/edit_inspiration" method="post">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Edit </h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="title" class="form-label">Picture</label>
+                                                        <input value="{{ inspiration.picture }}" autocomplete="off" name="img" class="form-control" id="img" placeholder="Enter title of new item..." required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        {% if inspiration.link %}
+                                                            <label for="link" class="form-label">Link</label>
+                                                            <input value="{{ inspiration.link }}" autocomplete="off" name="link" class="form-control" id="link" placeholder="Enter resource link of new item...">
+                                                            
+                                                        {% else %}
+                                                            <label for="link" class="form-label">Link</label>
+                                                            <input value="" name="link" class="form-control" autocomplete="off" id="link" placeholder="Enter resource link of new item...">
+                                                        {% endif %}
+                                                        
+                                                    </div>
+                                    
+                                                    <div class="mb-3">
+                                                        {% if inspiration.comment %}
+                                                            <label for="comment" class="form-label" style="white-space: pre-wrap;">Comment</label>
+                                                            <textarea name="comment" class="form-control" id="comment" rows="3" placeholder="Enter comments on item..." style="white-space: pre-wrap">{{ inspiration.comment }}</textarea>
+                                                        {% else %}
+                                                            <label for="comment" class="form-label" style="white-space: pre-wrap;">Comment</label>
+                                                            <textarea name="comment" class="form-control" id="comment" rows="3" placeholder="Enter comments on item..."></textarea>
+                                                        {% endif %}
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <div class="row w-100">
+                                                        <div class="col-5 text-start" style="padding: 0;">
+                                                            <button type="submit" formaction="/delete_inspiration" class="btn btn-danger">Delete</button>
+                                                        </div>
+                                                        <div class="col-7 text-end" style="padding: 0;">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                            <button type="submit" class="btn btn-primary">Save changes</button>
+                                                        </div>
+
+                                                    </div>
+                                                
+                                                
+                                                </div>
+                                                <input name="id" value="{{ inspiration.id }}" hidden>
+                                            </form>
+                                        </div>    
+                                    
+                                    </div>
+                            
+                                </div>
+                            </div>
+
+
+                    
+                            <div class="col text-end">
+                                
+                                {% if inspiration.link %}
+                                    <a href="{{ inspiration.link }}" class="btn btn-primary">Link</a>
+                                {% endif %}
+                            </div>
+                        </div> 
+                    </div>    
+                </div>
+            </div>
+        {% endfor %}
+      
+</div>
+
+
+
+{% endblock %}

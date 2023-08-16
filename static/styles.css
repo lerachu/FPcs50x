@@ -5,21 +5,13 @@ nav .navbar-brand
 }
 
 /* Colors for brand */
-nav .navbar-brand .blue
+nav .navbar-brand .purple
 {
-    color: #537fbe;
+    color: #f0289d;
 }
-nav .navbar-brand .red
+nav .navbar-brand .pink
 {
-    color: #ea433b;
-}
-nav .navbar-brand .yellow
-{
-    color: #f5b82e;
-}
-nav .navbar-brand .green
-{
-    color: #2e944b;
+    color: #dd09f0;
 }
 
 .form-center {
@@ -27,3 +19,44 @@ nav .navbar-brand .green
     justify-content: center;
     padding-top: 15px;
   }
+
+.line {
+    border: 3px solid #f0289d;
+    border-radius: 15px;
+}
+.line2 {
+    border: 2px solid #f718d9a9;
+    border-radius: 7px;
+}
+
+
+.btn-primary {
+    
+    background-color:#dd09f0;
+}
+
+.pinky {
+    color: rgb(243, 32, 162);
+}
+
+.done {
+    background-color:#f15cc5;
+}
+
+.masonry-brick {
+    color: rgb(0, 0, 0);
+    background-color: #ffffff;
+    display: inline-block;
+    padding: 5px;
+    width: 100%;
+    margin: 10px 0; /* for separating masonry-bricks vertically*/
+}
+
+@media only screen and (min-width: 480px) {
+    .masonry-container {
+        -moz-column-count: 3;
+        -webkit-column-count: 3;
+        column-count: 3;
+    }
+}
+

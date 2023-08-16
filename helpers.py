@@ -1,13 +1,9 @@
-import csv
-import datetime
-import pytz
-import requests
-import subprocess
-import urllib
-import uuid
-
+from cs50 import SQL
 from flask import redirect, render_template, session
 from functools import wraps
+import random
+
+db = SQL("sqlite:///profession.db")
 
 
 def apology(message, code=400):
@@ -39,42 +35,31 @@ def login_required(f):
     return decorated_function
 
 
-def lookup(symbol):
-    """Look up quote for symbol."""
 
-    # Prepare API request
-    symbol = symbol.upper()
-    end = datetime.datetime.now(pytz.timezone("US/Eastern"))
-    start = end - datetime.timedelta(days=7)
+def brand():
+    if session.get("user_id") is None:  # Default brand in navbar
+        return False
+    else:
+        questionnaire = db.execute("SELECT * FROM questionnaire WHERE user_id = ?", session["user_id"]) 
 
-    # Yahoo Finance API
-    url = (
-        f"https://query1.finance.yahoo.com/v7/finance/download/{urllib.parse.quote_plus(symbol)}"
-        f"?period1={int(start.timestamp())}"
-        f"&period2={int(end.timestamp())}"
-        f"&interval=1d&events=history&includeAdjustedClose=true"
-    )
+        try:
+            questionnaire = questionnaire[0]
+        
+        except IndexError:
+            return False
+        
+        else:
+            return questionnaire["profession"].capitalize() # Brand in navbar
+        
+        
+def randpic():
+    inspirations = db.execute("SELECT * FROM inspiration WHERE user_id = ?", session["user_id"])
+    
+    if inspirations:
+        rand = random.randrange(0, len(inspirations))  # Random pic from inspiration
+        pic = inspirations[rand]["picture"]
 
-    # Query API
-    try:
-        response = requests.get(url, cookies={"session": str(uuid.uuid4())}, headers={
-                                "User-Agent": "python-requests", "Accept": "*/*"})
-        response.raise_for_status()
-
-        # CSV header: Date,Open,High,Low,Close,Adj Close,Volume
-        quotes = list(csv.DictReader(response.content.decode("utf-8").splitlines()))
-        quotes.reverse()
-        price = round(float(quotes[0]["Adj Close"]), 2)
-        return {
-            "name": symbol,
-            "price": price,
-            "symbol": symbol
-        }
-    except (requests.RequestException, ValueError, KeyError, IndexError):
-        return None
-
-
-def usd(value):
-    """Format value as USD."""
-    return f"${value:,.2f}"
-
+        return pic
+    
+    else:
+        return False # There is no pics in inspirations

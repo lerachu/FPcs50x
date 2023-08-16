@@ -1,0 +1,309 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Plan
+{% endblock %}
+
+{% block main %}
+
+
+<div class="row justify-content-center">
+    <div class="col-6 text-end">
+        <h3 class="pinky">I did it!</h3>
+    </div>
+    <div class="col-6 text-start">
+        <!-- Кнопка-триггер модального окна -->
+        <button type="button" class="btn btn-primary " data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Add Item
+        </button>
+    </div>
+</div>  
+
+<!-- Модальное окно -->
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+    
+        <div class="modal-content">
+            <form action="/done" method="post">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">New Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+                    
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Title</label>
+                        <input name="title" class="form-control" id="exampleFormControlInput1" placeholder="Enter title of new item..." required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlInput2" class="form-label">Link</label>
+                        <input name="link" class="form-control" autocomplete="off" id="exampleFormControlInput2" placeholder="Enter resource link of new item...">
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea1" class="form-label">Description</label>
+                        <textarea name="description" class="form-control" id="exampleFormControlTextarea1" rows="2" placeholder="Enter description of new item..." required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="exampleFormControlTextarea2" class="form-label" style="white-space: pre-wrap;">Comment</label>
+                        <textarea name="comment" class="form-control" id="exampleFormControlTextarea2" rows="3" placeholder="Enter comments on item..."></textarea>
+                    </div>
+                    
+                    <div class="row justify-content-center">
+                        <div class="col-6 text-center">
+                            
+                            <div class="btn-group" role="group" aria-label="Базовая группа переключателей радио" style="margin-bottom: 10px;">
+                                <div class="container text-center">
+                                    <div class="row">
+                                        <label class="form-label">Choose the importance:</label>
+                                    </div>
+
+                                
+                                    <input value="1" type="radio" class="btn-check" name="importance" id="info-outlined" autocomplete="off" checked>
+                                    <label class="btn btn-outline-info btn-sm" for="info-outlined">Primary</label>
+
+                                    <input value="0" type="radio" class="btn-check" name="importance" id="warning-outlined" autocomplete="off">
+                                    <label class="btn btn-outline-warning btn-sm" for="warning-outlined">Secondary</label>
+                                
+                                </div>
+                            </div>                  
+
+                        </div>
+
+
+                        <div class="col-6 text-center">
+                            <div class="container">
+                                
+                                <div class="form-group">
+                                    <div class="container text-center">
+                                        <div class="row">
+                                            <label for="formControlRange"class="form-label">Assess complexity:</label>
+                                        </div>
+                                        <input name="complexity" type="range" 
+                                        class="form-control-range" 
+                                        min="1" max="10" step="1"
+                                        id="formControlRange" 
+                                        onChange="document.getElementById('rangeval').innerText = document.getElementById('formControlRange').value">
+                                        <span id="rangeval">6<!-- Default value --></span>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Add Item</button>
+                    </div>
+                </div>    
+            </form>
+        </div>
+    
+    </div>
+</div>
+
+
+
+
+
+
+<ol class="list-group list-group-numbered">
+    
+    {% for item in items %}
+        <li class="list-group-item d-flex" style="margin-top: 10px;">
+            
+            {% if item.complexity < 3  %}
+                {% set color = "success" %}
+            {% elif item.complexity < 6 %}
+                {% set color = "info" %}
+            {% elif item.complexity < 9 %}
+                {% set color = "warning" %}
+            {% else %}
+                {% set color = "danger" %}
+            {% endif %}
+
+            <div class="container w-75">
+                <div class="progress" style="height: 7px;">
+                    <div class="progress-bar bg-{{ color }} progress-bar-striped" role="progressbar" aria-label="Success example" style="width: {{ item.complexity * 10 }}%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                </div>
+
+                {% if item.importance == 1  %}
+                    {% set importance = "danger" %}
+                {% else %}
+                    {% set importance = "warning" %}
+                {% endif %}
+
+                <div class="card  border-{{ importance }} mb-3" style="border-width: 2px">
+                    <h5 class="card-header text-center" style="color: blueviolet;">
+                        {% if item.link %}
+                            <a href="{{ item.link }}" class="btn btn-link " style="color: blueviolet;">
+                                <h5>{{ item.title }}</h5>
+                            </a>
+                        {% else %}
+                            {{ item.title }}
+                        {% endif %}
+                    </h5>
+                    
+                    
+                    <div class="card-body">
+                    
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><h5 class="card-title" style="white-space: pre-wrap">{{ item.description }}</h5></li>
+                        {% if item.comment %}
+                            <li class="list-group-item">
+                                <p class="card-text" style="white-space: pre-wrap">{{ item.comment }}</p>
+                            </li>
+                        {% endif %}
+                    
+                    </ul>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="container">
+                            <div class="row">
+                            <div class="col">
+                                 <!-- Кнопка-триггер модального окна -->
+                                <a type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#EditItem{{ item.id }}">Edit</a>
+
+                                <!-- Модальное окно -->
+
+                                <div class="modal fade" id="EditItem{{ item.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg modal-dialog-centered">
+                                    
+                                        <div class="modal-content">
+                                            <form action="/edit_item" method="post">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Edit Item</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    
+                                                    <div class="mb-3">
+                                                        <label for="title" class="form-label">Title</label>
+                                                        <input value="{{ item.title }}" name="title" class="form-control" id="title" placeholder="Enter title of new item..." required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        {% if item.link %}
+                                                            <label for="link" class="form-label">Link</label>
+                                                            <input value="{{ item.link }}" autocomplete="off" name="link" class="form-control" id="link" placeholder="Enter resource link of new item...">
+                                                            
+                                                        {% else %}
+                                                            <label for="link" class="form-label">Link</label>
+                                                            <input value="" name="link" autocomplete="off" class="form-control" id="link" placeholder="Enter resource link of new item...">
+                                                        {% endif %}
+                                                        
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="description" class="form-label">Description</label>
+                                                        <textarea name="description" class="form-control" id="description" rows="2" placeholder="Enter description of new item..." style="white-space: pre-wrap" required>{{ item.description }}</textarea>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        {% if item.comment %}
+                                                            <label for="comment" class="form-label" style="white-space: pre-wrap;">Comment</label>
+                                                            <textarea name="comment" class="form-control" id="comment" rows="3" placeholder="Enter comments on item..." style="white-space: pre-wrap">{{ item.comment }}</textarea>
+                                                        {% else %}
+                                                            <label for="comment" class="form-label" style="white-space: pre-wrap;">Comment</label>
+                                                            <textarea name="comment" class="form-control" id="comment" rows="3" placeholder="Enter comments on item..."></textarea>
+                                                        {% endif %}
+                                                        </div>
+                                                    
+                                                    <div class="row justify-content-center">
+                                                        <div class="col-6 text-center">
+                                                            
+                                                            <div class="btn-group" role="group" aria-label="Базовая группа переключателей радио" style="margin-bottom: 10px;">
+                                                                <div class="container text-center">
+                                                                    <div class="row">
+                                                                        <label class="form-label">Choose the importance:</label>
+                                                                    </div>
+
+                                                                    {% if item.importance == 1  %}
+                                                                        {% set primary = "checked" %}
+                                                                        {% set secondary = "" %}
+                                                                    {% else %}
+                                                                        {% set primary = "" %} 
+                                                                        {% set secondary = "checked" %}
+                                                                    {% endif %}
+
+                                                                    <input value="1" type="radio" class="btn-check" name="importance" id="info-outlined{{ item.id }}" autocomplete="off" {{ primary }}>
+                                                                    <label class="btn btn-outline-info btn-sm" for="info-outlined{{ item.id }}">Primary</label>
+
+                                                                    <input value="0" type="radio" class="btn-check" name="importance" id="warning-outlined{{ item.id }}" autocomplete="off" {{ secondary }}>
+                                                                    <label class="btn btn-outline-warning btn-sm" for="warning-outlined{{ item.id }}">Secondary</label>
+                                                                
+                                                                </div>
+                                                            </div>                  
+
+                                                        </div>
+
+
+                                                        <div class="col-6 text-center">
+                                                            <div class="container">
+                                                                
+                                                                <div class="form-group">
+                                                                    <div class="container text-center">
+                                                                        <div class="row">
+                                                                            <label for="formControlRange"class="form-label">Assess complexity:</label>
+                                                                        </div>
+                                                                        <input name="complexity" type="range" value="{{ item.complexity }}"
+                                                                        class="form-control-range" 
+                                                                        min="1" max="10" step="1"
+                                                                        id="formControlRange{{ item.id }}" 
+                                                                        onChange="document.getElementById('rangeval{{ item.id }}').innerText = document.getElementById('formControlRange{{ item.id }}').value">
+                                                                        <span id="rangeval{{ item.id }}">{{ item.complexity }}<!-- Default value --></span>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                            </div>
+                                                        </div>
+                                                        <input name="id" value="{{ item.id }}" hidden>
+
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <div class="row w-100">
+                                                            <div class="col-5 text-start" style="padding: 0;">
+                                                                <button type="submit" formaction="/delete_item" class="btn btn-danger">Delete</button>
+                                                            </div>
+                                                            <div class="col-7 text-end" style="padding: 0;">
+                                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                                                <button type="submit" class="btn btn-primary">Save changes</button>
+                                                            </div>
+
+                                                        </div>
+                                                        
+                                                        
+                                                    </div>
+                                                </div>    
+                                            </form>
+                                        </div>
+                                    
+                                    </div>
+                                </div>
+
+
+                            </div>
+                            <div class="col text-end">
+                                <form action="change_completeness" method="post">
+                                    <input name="id" value="{{ item.id }}" hidden>
+                                    <input name="completeness" value="{{ item.completeness }}" hidden>
+                                    <button type="submit" class="btn btn-info done">Do it again</button>
+
+                                    
+                                </form>
+                            </div>
+                        </div>
+                        
+                        
+                    </div>     
+                    
+                </div>
+            </div>
+        </li>
+
+       
+
+    {% endfor %}
+</ol>
+
+
+
+{% endblock %}
